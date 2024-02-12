@@ -8,9 +8,10 @@ import {
   ZoomIn,
   MathPlus,
   SoftwareDownload,
+  Scale,
+  Rotate,
 } from "./icons";
 import { useDownload } from "./use-download";
-import { Scale } from "./icons/scale";
 
 interface ControlsProps {
   url: string;
@@ -92,6 +93,13 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
         </button>
       </div>
 
+      {/* ROTATE */}
+      <div className='pdf__Controls__button'>
+        <button>
+          <Rotate />
+        </button>
+      </div>
+
       {/* DIVIDER */}
       <hr />
 
@@ -135,15 +143,24 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
             padding-block: 0.25rem;
             gap: 0.5rem;
 
-            button{
+            button {
             background-color: transparent;
             border: none;
             outline;
             color: rgb(255, 255, 255);
             font-size: 1rem;
+            cursor: pointer;
+            padding: 6px 7px;
+            line-height: 0px
 
             }
+            button:hover {
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.208);
           }
+
+          }
+
 
           .pdf__Controls__input__wrapper {
             display: flex;
@@ -157,6 +174,7 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
               border: none;
               padding: 1px 10px;
               width: calc(max(2,2) * 1ch + 1px)
+              text-align: center;
             }
           }
         }
