@@ -4,10 +4,10 @@ import {
   MINIMUM_SCALE,
   initialFrameState,
   reducer,
-} from "./state";
-import { Viewer } from "./viewer";
-import { Controls } from "./controls";
-import { useHeight } from "./use-height";
+} from "../src/state";
+import { Viewer } from "../src/viewer";
+import { Controls } from "../src/controls";
+import { useHeight } from "../src/use-height";
 
 interface FrameProps {
   title: string;
@@ -16,8 +16,6 @@ interface FrameProps {
 
 export function Frame(props: FrameProps) {
   const { title, url } = props;
-
-  console.log({ url });
 
   const [state, dispatch] = useReducer(reducer, initialFrameState);
   const { loading, activePage, pageInput, numPages, scale, node } = state;

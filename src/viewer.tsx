@@ -54,7 +54,6 @@ const ViewerRef = (props: ViewerProps) => {
         <Page
           loading={""}
           pageNumber={pageNumber}
-          renderInteractiveForms={renderInteractiveForms}
           renderAnnotationLayer={renderAnnotationLayer}
           renderTextLayer={renderTextLayer}
           key={`page_${pageNumber}`}
@@ -71,7 +70,7 @@ const ViewerRef = (props: ViewerProps) => {
           handleNumPages(numPages);
           const page = await _transport.getPage(1);
 
-          const [top, bottom, width, height] = page.view
+          const [top, bottom, width, height] = page.view;
           handlePageDimensions({ width, height });
           handleLoading(false);
 
