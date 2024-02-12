@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChangeEvent, Ref, forwardRef } from "react";
 
 import { MAXIMUM_SCALE, MINIMUM_SCALE } from "./state";
@@ -9,6 +10,7 @@ import {
   SoftwareDownload,
 } from "./icons";
 import { useDownload } from "./use-download";
+import { Scale } from "./icons/scale";
 
 interface ControlsProps {
   url: string;
@@ -43,13 +45,12 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
   });
 
   return (
-    <section ref={controlsRef} className="pdf__Controls">
+    <section ref={controlsRef} className='pdf__Controls'>
       {/* PAGE INPUT */}
-      <div className="pdf__Controls__button">
-        <p>Page</p>
-        <p className="pdf__Controls__input__wrapper">
+      <div className='pdf__Controls__button'>
+        <p className='pdf__Controls__input__wrapper'>
           <input
-            type="text"
+            type='text'
             size={pageInput.toString().length}
             value={pageInput}
             onChange={handlePageInput}
@@ -67,7 +68,7 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
       <hr />
 
       {/* ZOOM */}
-      <div className="pdf__Controls__button">
+      <div className='pdf__Controls__button'>
         <button disabled={scale <= MINIMUM_SCALE} onClick={handleZoomOut}>
           <MathMinus />
         </button>
@@ -84,8 +85,18 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
       {/* DIVIDER */}
       <hr />
 
+      {/* SCALE */}
+      <div className='pdf__Controls__button'>
+        <button>
+          <Scale />
+        </button>
+      </div>
+
+      {/* DIVIDER */}
+      <hr />
+
       {/* DOWNLOAD */}
-      <div className="pdf__Controls__button">
+      <div className='pdf__Controls__button'>
         <button onClick={download}>
           <SoftwareDownload />
         </button>
@@ -95,6 +106,7 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
         .pdf__Controls {
             display: flex;
             align-self: end;
+            align-items:center;
             justify-self: center;
             z-index: 1;
             margin-bottom: 1rem;
@@ -109,10 +121,11 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           }
 
           hr {
-            width: 0.125rem;
-            height: auto;
+            width: 0.12rem;
+            height: 20px;
             border-top: 0;
-            background-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,.3);
+            border: none;
           }
 
           .pdf__Controls__button {
@@ -121,15 +134,29 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
             padding-inline: 0.5rem;
             padding-block: 0.25rem;
             gap: 0.5rem;
+
+            button{
+            background-color: transparent;
+            border: none;
+            outline;
+            color: rgb(255, 255, 255);
+            font-size: 1rem;
+
+            }
           }
 
           .pdf__Controls__input__wrapper {
             display: flex;
             gap: 0.5rem;
             padding-inline: 0.5rem;
-
+            
             input {
-              background: transparent;
+              color: rgb(255, 255, 255);
+              background: rgba(0, 0, 0);
+              outline: none;
+              border: none;
+              padding: 1px 10px;
+              width: calc(max(2,2) * 1ch + 1px)
             }
           }
         }

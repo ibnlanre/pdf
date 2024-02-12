@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChangeEvent, useCallback, useMemo, useReducer, useRef } from "react";
 import {
   MAXIMUM_SCALE,
