@@ -21,4 +21,5 @@ Fix the following issues:
 
 ## NOTES
 
-[ ] all icons are gotten from iconify (icons[ ]gg)
+
+- [ ] all icons are gotten from [css.gg](https://icon-sets.iconify.design/gg)
