@@ -22,6 +22,10 @@ type FrameStateAction = {
     type: "SET_SCALE";
     payload: number;
   };
+  scaleInput: {
+    type: "SET_SCALE_INPUT";
+    payload: string;
+  };
   frame_width: {
     type: "SET_FRAME_WIDTH";
     payload: number;
@@ -55,6 +59,7 @@ export const initialFrameState = {
   loading: true,
   activePage: 1,
   pageInput: "1",
+  scaleInput: "100",
   numPages: 1,
   scale: 1,
   frame_width: 0,
@@ -78,6 +83,8 @@ export function reducer(state: FrameState, action: FrameAction) {
       return { ...state, numPages: payload };
     case "SET_SCALE":
       return { ...state, scale: payload };
+    case "SET_SCALE_INPUT":
+      return { ...state, scaleInput: payload };
     case "SET_FRAME_WIDTH":
       return { ...state, frame_width: payload };
     case "SET_FRAME_HEIGHT":

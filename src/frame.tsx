@@ -19,7 +19,8 @@ export function Frame(props: FrameProps) {
   const { title, url } = props;
 
   const [state, dispatch] = useReducer(reducer, initialFrameState);
-  const { loading, activePage, pageInput, numPages, scale, node } = state;
+  const { loading, activePage, pageInput, scaleInput, numPages, scale, node } =
+    state;
   const { frame_width, frame_height, page_width, page_height } = state;
 
   // REFS
@@ -77,11 +78,41 @@ export function Frame(props: FrameProps) {
   }, [scale]);
 
   const handleScale = useCallback(() => {
-    if (shapeAtScale) dispatch({ type: "SET_SCALE", payload: 1 });
-    else {
-      const client_width = Math.round(frame_width / page_width);
-      dispatch({ type: "SET_SCALE", payload: client_width });
+    const scale = Number.isNaN(Number(scaleInput))
+      ? 1
+      : Number(scaleInput) / 100;
+
+    console.log({ scale, scaleInput });
+
+    if (scale < MINIMUM_SCALE) {
+      dispatch({ type: "SET_SCALE", payload: MINIMUM_SCALE });
+      dispatch({
+        type: "SET_SCALE_INPUT",
+        payload: (MINIMUM_SCALE * 100).toString(),
+      });
+    } else if (scale > MAXIMUM_SCALE) {
+      dispatch({ type: "SET_SCALE", payload: MAXIMUM_SCALE });
+      dispatch({
+        type: "SET_SCALE_INPUT",
+        payload: (MAXIMUM_SCALE * 100).toString(),
+      });
+    } else dispatch({ type: "SET_SCALE", payload: scale });
+
+    // if (shapeAtScale) dispatch({ type: "SET_SCALE", payload: 1 });
+    // else {
+    //   const client_width = Math.round(frame_width / page_width);
+    //   dispatch({ type: "SET_SCALE", payload: client_width });
+    // }
+  }, [scaleInput]);
+
+  const handleScaleInput = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
+    const sanitizedValue = parseInt(evt.target.value);
+    if (Number.isNaN(sanitizedValue)) {
+      dispatch({ type: "SET_SCALE_INPUT", payload: "" });
+      return;
     }
+
+    dispatch({ type: "SET_SCALE_INPUT", payload: sanitizedValue.toString() });
   }, []);
 
   const handlePageDimensions = useCallback(
@@ -139,14 +170,14 @@ export function Frame(props: FrameProps) {
 
   return (
     <div
-      className="react-pdf__Container"
+      className='react-pdf__Container'
       ref={containerRef}
       onTouchStart={hideControls}
       onTouchEnd={showControls}
       onMouseMove={showControls}
       onScroll={hideControls}
     >
-      <article className="react-pdf__Frame" ref={frameRef}>
+      <article className='react-pdf__Frame' ref={frameRef}>
         <Viewer
           url={url}
           numPages={numPages}
@@ -170,10 +201,12 @@ export function Frame(props: FrameProps) {
           handlePageInput={handlePageInput}
           handlePageInputBlur={handlePageInputBlur}
           handleScale={handleScale}
+          handleScaleInput={handleScaleInput}
           shapeAtScale={shapeAtScale}
           pageInput={activePage}
           numPages={numPages}
           scale={scale}
+          scaleInput={scaleInput}
         />
       </article>
       <style>{`

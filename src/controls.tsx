@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ChangeEvent, Ref, forwardRef } from "react";
+import { ChangeEvent, Ref, forwardRef, useState, KeyboardEvent } from "react";
 
 import { MAXIMUM_SCALE, MINIMUM_SCALE } from "./state";
 import {
@@ -23,10 +23,12 @@ interface ControlsProps {
   handlePageInput: (evt: ChangeEvent<HTMLInputElement>) => void;
   handlePageInputBlur: () => void;
   handleScale: () => void;
+  handleScaleInput: (evt: ChangeEvent<HTMLInputElement>) => void;
   shapeAtScale: boolean;
   pageInput: number;
   numPages: number;
   scale: number;
+  scaleInput: string;
 }
 
 function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
@@ -36,9 +38,10 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
     handleZoomOut,
     handlePageInput,
     handlePageInputBlur,
+    handleScaleInput,
     handleScale,
   } = props;
-  const { pageInput, numPages, scale, title, url } = props;
+  const { pageInput, scaleInput, numPages, scale, title, url } = props;
 
   const download = useDownload({
     title,
@@ -74,9 +77,15 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           <MathMinus />
         </button>
 
-        <button onClick={handleScale}>
-          {shapeAtScale ? <ZoomOut /> : <ZoomIn />}
-        </button>
+        <input
+          type='text'
+          size={pageInput.toString().length}
+          value={scaleInput}
+          onChange={handleScaleInput}
+          onKeyDown={(evt) => {
+            if (evt.key === "Enter") handleScale();
+          }}
+        />
 
         <button disabled={scale >= MAXIMUM_SCALE} onClick={handleZoomIn}>
           <MathPlus />
@@ -99,9 +108,6 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           <Rotate />
         </button>
       </div>
-
-      {/* DIVIDER */}
-      <hr />
 
       {/* DOWNLOAD */}
       <div className='pdf__Controls__button'>
@@ -161,22 +167,22 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
 
           }
 
-
           .pdf__Controls__input__wrapper {
             display: flex;
             gap: 0.5rem;
             padding-inline: 0.5rem;
             
-            input {
+          }
+
+           input {
               color: rgb(255, 255, 255);
+              text-align: center;
               background: rgba(0, 0, 0);
               outline: none;
               border: none;
               padding: 1px 10px;
-              width: calc(max(2,2) * 1ch + 1px)
-              text-align: center;
+              
             }
-          }
         }
       `}</style>
     </section>
