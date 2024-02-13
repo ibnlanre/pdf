@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ChangeEvent, Ref, forwardRef } from "react";
+import { ChangeEvent, MouseEvent, Ref, forwardRef } from "react";
 
 import { MAXIMUM_SCALE, MINIMUM_SCALE } from "./state";
 import {
@@ -24,6 +24,8 @@ interface ControlsProps {
   handlePageInputBlur: () => void;
   handleScale: () => void;
   handleScaleInput: (evt: ChangeEvent<HTMLInputElement>) => void;
+  hideTooltip: (evt: MouseEvent<HTMLButtonElement>) => void;
+  showTooltip: (evt: MouseEvent<HTMLButtonElement>) => void;
   shapeAtScale: boolean;
   pageInput: number;
   numPages: number;
@@ -40,6 +42,8 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
     handlePageInputBlur,
     handleScaleInput,
     handleScale,
+    showTooltip,
+    hideTooltip,
   } = props;
   const { pageInput, scaleInput, numPages, scale, title, url } = props;
 
@@ -73,7 +77,13 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
 
       {/* ZOOM */}
       <div className='pdf__Controls__button'>
-        <button disabled={scale <= MINIMUM_SCALE} onClick={handleZoomOut}>
+        <p className='pdf__Controls__tooltip'>Zoom out</p>
+        <button
+          disabled={scale <= MINIMUM_SCALE}
+          onClick={handleZoomOut}
+          onMouseEnter={showTooltip}
+          onMouseLeave={hideTooltip}
+        >
           <MathMinus />
         </button>
 
@@ -88,9 +98,17 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           }}
         />
 
-        <button disabled={scale >= MAXIMUM_SCALE} onClick={handleZoomIn}>
-          <MathPlus />
-        </button>
+        <div className='pdf__Controls__button'>
+          <p className='pdf__Controls__tooltip'>Zoom in</p>
+          <button
+            disabled={scale >= MAXIMUM_SCALE}
+            onClick={handleZoomIn}
+            onMouseEnter={showTooltip}
+            onMouseLeave={hideTooltip}
+          >
+            <MathPlus />
+          </button>
+        </div>
       </div>
 
       {/* DIVIDER */}
@@ -98,21 +116,29 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
 
       {/* SCALE */}
       <div className='pdf__Controls__button'>
-        <button>
+        <p className='pdf__Controls__tooltip'>Fit to width</p>{" "}
+        {/* fit to width or fit to page */}
+        <button onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
           <Scale />
         </button>
       </div>
 
       {/* ROTATE */}
       <div className='pdf__Controls__button'>
-        <button>
+        <p className='pdf__Controls__tooltip'>Rotate</p>
+        <button onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
           <Rotate />
         </button>
       </div>
 
       {/* DOWNLOAD */}
       <div className='pdf__Controls__button'>
-        <button onClick={download}>
+        <p className='pdf__Controls__tooltip'>Download</p>
+        <button
+          onClick={download}
+          onMouseEnter={showTooltip}
+          onMouseLeave={hideTooltip}
+        >
           <SoftwareDownload />
         </button>
       </div>
@@ -141,12 +167,27 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           }
 
           .pdf__Controls__button {
-            display: flex;
+            display: inline-flex;
+            position: relative; 
             align-items: center;
             padding-inline: 0.4rem;
             
            
             gap: 0.125rem;
+            
+            .pdf__Controls__tooltip{
+             opacity: 0;
+             position: absolute; 
+             top: 1rem; 
+             left: 0rem; 
+             background-color: rgba(0, 0, 0, 0.75);
+             color: white; 
+             font-size: 0.65rem;
+             width: max-content;
+             padding: 0.4rem; 
+             border-radius: 0.25rem;
+               transition: opacity 0.3s ease-in-out;
+            }
 
             button {
             background-color: transparent;
@@ -157,12 +198,12 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
             cursor: pointer;
             padding: 5px;
             line-height: 0rem
-
             }
+
             button:hover {
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.208);
-          }
+             }
 
           }
 

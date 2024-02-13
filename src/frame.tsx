@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ChangeEvent, useCallback, useMemo, useReducer, useRef } from "react";
+import {
+  ChangeEvent,
+  MouseEvent,
+  useCallback,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import {
   MAXIMUM_SCALE,
   MINIMUM_SCALE,
@@ -26,6 +33,7 @@ export function Frame(props: FrameProps) {
   // REFS
   const containerRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
+
   const frameRef = useCallback((node: HTMLDivElement) => {
     if (node) {
       dispatch({ type: "SET_FRAME_WIDTH", payload: node.offsetWidth });
@@ -53,16 +61,32 @@ export function Frame(props: FrameProps) {
 
   const hideControls = useCallback(() => {
     // console.log(controlsRef.current?.classList);
-    console.log("hideControls");
     if (controlsRef.current) {
       controlsRef.current.style.opacity = "0";
     }
   }, []);
 
   const showControls = useCallback(() => {
-    console.log("showControls");
     if (controlsRef.current) {
       controlsRef.current.style.opacity = "1";
+    }
+  }, []);
+
+  // HIDE/SHOW TOOLTIP
+
+  const showTooltip = useCallback((evt: MouseEvent<HTMLButtonElement>) => {
+    const toolTip = evt.currentTarget.previousElementSibling as HTMLElement;
+
+    if (toolTip) {
+      toolTip.style.opacity = "1";
+    }
+  }, []);
+
+  const hideTooltip = useCallback((evt: MouseEvent<HTMLButtonElement>) => {
+    const toolTip = evt.currentTarget.previousElementSibling as HTMLElement;
+
+    if (toolTip) {
+      toolTip.style.opacity = "0";
     }
   }, []);
 
@@ -206,6 +230,8 @@ export function Frame(props: FrameProps) {
           handlePageInputBlur={handlePageInputBlur}
           handleScale={handleScale}
           handleScaleInput={handleScaleInput}
+          showTooltip={showTooltip}
+          hideTooltip={hideTooltip}
           shapeAtScale={shapeAtScale}
           pageInput={activePage}
           numPages={numPages}
