@@ -151,21 +151,33 @@ export function Frame(props: FrameProps) {
   }, []);
 
   // FIT TO WIDTH HANDLER
-  const handleFit = useCallback(() => {
-    const fitToPage = +(page_width / frame_width).toFixed(2);
-    const fitToWidth = +(frame_width / page_width).toFixed(2);
+  const handleFit = useCallback(
+    (evt: MouseEvent<HTMLButtonElement>) => {
+      const button = evt.currentTarget;
+      const toolTip = button.previousElementSibling as HTMLElement;
+      let fitScale;
 
-    const c = scale !== fitToPage ? fitToPage : fitToWidth;
+      const fitToWidth = +(frame_width / page_width).toFixed(2);
+      const fitToPage = +(page_width / frame_width).toFixed(2);
 
-    dispatch({ type: "SET_SCALE", payload: c });
-    dispatch({
-      type: "SET_SCALE_INPUT",
-      payload: `${(c * 100).toString()}%`,
-    });
+      if (scale !== fitToPage) {
+        button.style.transform = "rotate(180deg)";
+        fitScale = fitToPage;
+        toolTip.textContent = "Fit to width";
+      } else {
+        button.style.transform = "rotate(90deg)";
+        fitScale = fitToWidth;
+        toolTip.textContent = "Fit to page";
+      }
 
-    // dispatch({ type: "SET_SCALE", payload: 1 });
-    // dispatch({ type: "SET_SCALE_INPUT", payload: "100%" });
-  }, [frame_width, page_width, scale]);
+      dispatch({ type: "SET_SCALE", payload: fitScale });
+      dispatch({
+        type: "SET_SCALE_INPUT",
+        payload: `${(fitScale * 100).toString()}%`,
+      });
+    },
+    [frame_width, page_width, scale]
+  );
 
   const handlePageDimensions = useCallback(
     (page: { width: number; height: number }) => {
