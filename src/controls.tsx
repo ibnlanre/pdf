@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ChangeEvent, Ref, forwardRef, useState, KeyboardEvent } from "react";
+import { ChangeEvent, Ref, forwardRef } from "react";
 
 import { MAXIMUM_SCALE, MINIMUM_SCALE } from "./state";
 import {
@@ -77,6 +77,7 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           <MathMinus />
         </button>
 
+        {/* SCALE INPUT */}
         <input
           type='text'
           size={pageInput.toString().length}
@@ -129,10 +130,7 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
             width: max-content;
             border-radius: 0.375rem;
             grid-area: 1/1;
-
-          .fade-out {
-            opacity: 0;
-          }
+            transition: opacity 0.6s ease-in-out;
 
           hr {
             width: 0.12rem;
@@ -145,9 +143,10 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           .pdf__Controls__button {
             display: flex;
             align-items: center;
-            padding-inline: 0.5rem;
-            padding-block: 0.25rem;
-            gap: 0.5rem;
+            padding-inline: 0.4rem;
+            
+           
+            gap: 0.125rem;
 
             button {
             background-color: transparent;
@@ -156,8 +155,8 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
             color: rgb(255, 255, 255);
             font-size: 1rem;
             cursor: pointer;
-            padding: 6px 7px;
-            line-height: 0px
+            padding: 5px;
+            line-height: 0rem
 
             }
             button:hover {
@@ -169,8 +168,10 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
 
           .pdf__Controls__input__wrapper {
             display: flex;
+            align-items: center;
             gap: 0.5rem;
             padding-inline: 0.5rem;
+           
             
           }
 
@@ -180,7 +181,7 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
               background: rgba(0, 0, 0);
               outline: none;
               border: none;
-              padding: 1px 10px;
+              padding: 0.2rem 0.5rem;
               
             }
         }

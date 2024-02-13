@@ -59,7 +59,7 @@ export const initialFrameState = {
   loading: true,
   activePage: 1,
   pageInput: "1",
-  scaleInput: "100",
+  scaleInput: "100%",
   numPages: 1,
   scale: 1,
   frame_width: 0,

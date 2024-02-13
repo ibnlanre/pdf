@@ -29,6 +29,8 @@ interface ViewerProps {
   handleNumPages: (numPages: number) => void;
   handlePageDimensions: (page: { width: number; height: number }) => void;
   handleActivePage: (pageNumber: number) => void;
+  hideControls: () => void;
+  showControls: () => void;
   node: HTMLDivElement | null;
   activePage: number;
 }
@@ -46,6 +48,8 @@ const ViewerRef = (props: ViewerProps) => {
     handleLoading,
     activePage,
     node,
+    hideControls,
+    showControls,
   } = props;
 
   const pages = useMemo(() => {
@@ -103,6 +107,10 @@ const ViewerRef = (props: ViewerProps) => {
           console.error("Error loading document", e);
         }
       }}
+      onScroll={hideControls}
+      onMouseMove={showControls}
+      onTouchStart={showControls}
+      onTouchEnd={hideControls}
     >
       {pages}
     </Document>

@@ -52,14 +52,17 @@ export function Frame(props: FrameProps) {
   // HIDE/SHOW CONTROLS
 
   const hideControls = useCallback(() => {
+    // console.log(controlsRef.current?.classList);
+    console.log("hideControls");
     if (controlsRef.current) {
-      controlsRef.current.classList.add("fade-out");
+      controlsRef.current.style.opacity = "0";
     }
   }, []);
 
   const showControls = useCallback(() => {
+    console.log("showControls");
     if (controlsRef.current) {
-      controlsRef.current.classList.remove("fade-out");
+      controlsRef.current.style.opacity = "1";
     }
   }, []);
 
@@ -69,12 +72,20 @@ export function Frame(props: FrameProps) {
     const zoom = +(scale + 0.25).toFixed(2);
     const payload = zoom > MAXIMUM_SCALE ? MAXIMUM_SCALE : zoom;
     dispatch({ type: "SET_SCALE", payload });
+    dispatch({
+      type: "SET_SCALE_INPUT",
+      payload: `${(payload * 100).toString()}%`,
+    });
   }, [scale]);
 
   const handleZoomOut = useCallback(() => {
     const zoom = +(scale - 0.25).toFixed(2);
     const payload = zoom < MINIMUM_SCALE ? MINIMUM_SCALE : zoom;
     dispatch({ type: "SET_SCALE", payload });
+    dispatch({
+      type: "SET_SCALE_INPUT",
+      payload: `${(payload * 100).toString()}%`,
+    });
   }, [scale]);
 
   const handleScale = useCallback(() => {
@@ -82,27 +93,25 @@ export function Frame(props: FrameProps) {
       ? 1
       : Number(scaleInput) / 100;
 
-    console.log({ scale, scaleInput });
-
     if (scale < MINIMUM_SCALE) {
       dispatch({ type: "SET_SCALE", payload: MINIMUM_SCALE });
       dispatch({
         type: "SET_SCALE_INPUT",
-        payload: (MINIMUM_SCALE * 100).toString(),
+        payload: `${(MINIMUM_SCALE * 100).toString()}%`,
       });
     } else if (scale > MAXIMUM_SCALE) {
       dispatch({ type: "SET_SCALE", payload: MAXIMUM_SCALE });
       dispatch({
         type: "SET_SCALE_INPUT",
-        payload: (MAXIMUM_SCALE * 100).toString(),
+        payload: `${(MAXIMUM_SCALE * 100).toString()}%`,
       });
-    } else dispatch({ type: "SET_SCALE", payload: scale });
-
-    // if (shapeAtScale) dispatch({ type: "SET_SCALE", payload: 1 });
-    // else {
-    //   const client_width = Math.round(frame_width / page_width);
-    //   dispatch({ type: "SET_SCALE", payload: client_width });
-    // }
+    } else {
+      dispatch({ type: "SET_SCALE", payload: scale });
+      dispatch({
+        type: "SET_SCALE_INPUT",
+        payload: `${scaleInput.toString()}%`,
+      });
+    }
   }, [scaleInput]);
 
   const handleScaleInput = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
@@ -169,14 +178,7 @@ export function Frame(props: FrameProps) {
   }, [scale, page_width, frame_width]);
 
   return (
-    <div
-      className='react-pdf__Container'
-      ref={containerRef}
-      onTouchStart={hideControls}
-      onTouchEnd={showControls}
-      onMouseMove={showControls}
-      onScroll={hideControls}
-    >
+    <div className='react-pdf__Container' ref={containerRef}>
       <article className='react-pdf__Frame' ref={frameRef}>
         <Viewer
           url={url}
@@ -188,6 +190,8 @@ export function Frame(props: FrameProps) {
           handleActivePage={handleActivePage}
           activePage={activePage}
           node={node}
+          hideControls={hideControls}
+          showControls={showControls}
         />
 
         <Controls
