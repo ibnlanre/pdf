@@ -23,6 +23,7 @@ interface ControlsProps {
   handlePageInput: (evt: ChangeEvent<HTMLInputElement>) => void;
   handlePageInputBlur: () => void;
   handleScale: () => void;
+  handleFit: (evt: MouseEvent<HTMLButtonElement>) => void;
   handleScaleInput: (evt: ChangeEvent<HTMLInputElement>) => void;
   hideTooltip: (evt: MouseEvent<HTMLButtonElement>) => void;
   showTooltip: (evt: MouseEvent<HTMLButtonElement>) => void;
@@ -42,6 +43,7 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
     handlePageInputBlur,
     handleScaleInput,
     handleScale,
+    handleFit,
     showTooltip,
     hideTooltip,
   } = props;
@@ -127,7 +129,10 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
         <button
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
-          onClick={hideTooltip}
+          onClick={(evt) => {
+            hideTooltip(evt);
+            handleFit(evt);
+          }}
         >
           <Scale />
         </button>

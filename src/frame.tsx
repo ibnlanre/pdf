@@ -112,6 +112,8 @@ export function Frame(props: FrameProps) {
     });
   }, [scale]);
 
+  // SCALE INPUT HANDLERS
+
   const handleScale = useCallback(() => {
     const scale = Number.isNaN(Number(scaleInput))
       ? 1
@@ -147,6 +149,23 @@ export function Frame(props: FrameProps) {
 
     dispatch({ type: "SET_SCALE_INPUT", payload: sanitizedValue.toString() });
   }, []);
+
+  // FIT TO WIDTH HANDLER
+  const handleFit = useCallback(() => {
+    const fitToPage = +(page_width / frame_width).toFixed(2);
+    const fitToWidth = +(frame_width / page_width).toFixed(2);
+
+    const c = scale !== fitToPage ? fitToPage : fitToWidth;
+
+    dispatch({ type: "SET_SCALE", payload: c });
+    dispatch({
+      type: "SET_SCALE_INPUT",
+      payload: `${(c * 100).toString()}%`,
+    });
+
+    // dispatch({ type: "SET_SCALE", payload: 1 });
+    // dispatch({ type: "SET_SCALE_INPUT", payload: "100%" });
+  }, [frame_width, page_width, scale]);
 
   const handlePageDimensions = useCallback(
     (page: { width: number; height: number }) => {
@@ -229,6 +248,7 @@ export function Frame(props: FrameProps) {
           handlePageInput={handlePageInput}
           handlePageInputBlur={handlePageInputBlur}
           handleScale={handleScale}
+          handleFit={handleFit}
           handleScaleInput={handleScaleInput}
           showTooltip={showTooltip}
           hideTooltip={hideTooltip}
