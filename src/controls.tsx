@@ -222,6 +222,11 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
             background-color: rgba(255, 255, 255, 0.208);
              }
 
+             button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: transparent;
+
           }
 
           .pdf__Controls__input__wrapper {
