@@ -80,7 +80,10 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
         <p className='pdf__Controls__tooltip'>Zoom out</p>
         <button
           disabled={scale <= MINIMUM_SCALE}
-          onClick={handleZoomOut}
+          onClick={(evt) => {
+            hideTooltip(evt);
+            handleZoomOut();
+          }}
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
         >
@@ -102,7 +105,10 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           <p className='pdf__Controls__tooltip'>Zoom in</p>
           <button
             disabled={scale >= MAXIMUM_SCALE}
-            onClick={handleZoomIn}
+            onClick={(evt) => {
+              hideTooltip(evt);
+              handleZoomIn();
+            }}
             onMouseEnter={showTooltip}
             onMouseLeave={hideTooltip}
           >
@@ -118,7 +124,11 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
       <div className='pdf__Controls__button'>
         <p className='pdf__Controls__tooltip'>Fit to width</p>{" "}
         {/* fit to width or fit to page */}
-        <button onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
+        <button
+          onMouseEnter={showTooltip}
+          onMouseLeave={hideTooltip}
+          onClick={hideTooltip}
+        >
           <Scale />
         </button>
       </div>
@@ -126,7 +136,11 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
       {/* ROTATE */}
       <div className='pdf__Controls__button'>
         <p className='pdf__Controls__tooltip'>Rotate</p>
-        <button onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
+        <button
+          onMouseEnter={showTooltip}
+          onMouseLeave={hideTooltip}
+          onClick={hideTooltip}
+        >
           <Rotate />
         </button>
       </div>
@@ -135,7 +149,10 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
       <div className='pdf__Controls__button'>
         <p className='pdf__Controls__tooltip'>Download</p>
         <button
-          onClick={download}
+          onClick={(evt) => {
+            hideTooltip(evt);
+            download();
+          }}
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
         >
