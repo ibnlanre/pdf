@@ -70,6 +70,7 @@ const ViewerRef = (props: ViewerProps) => {
   return (
     <Document
       file={url}
+      loading={null} // TODO: Add loading component
       onLoadSuccess={async ({ numPages, _transport }) => {
         try {
           handleNumPages(numPages);
