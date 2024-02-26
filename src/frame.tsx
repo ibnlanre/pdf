@@ -233,8 +233,8 @@ export function Frame(props: FrameProps) {
   }, [scale, page_width, frame_width]);
 
   return (
-    <div className='react-pdf__Container' ref={containerRef}>
-      <article className='react-pdf__Frame' ref={frameRef}>
+    <div className="react-pdf__Container" ref={containerRef}>
+      <article className="react-pdf__Frame" ref={frameRef}>
         <Viewer
           url={url}
           numPages={numPages}
@@ -292,9 +292,8 @@ export function Frame(props: FrameProps) {
             text-align: center;
             overflow: auto;
             gap: 0.75rem;
-            display: grid;
-            align-content: start;
-            grid-auto-rows: min-content;
+            display: flex;
+            flex-direction: column;
             grid-area: 1/1;
 
             .react-pdf__Page {
