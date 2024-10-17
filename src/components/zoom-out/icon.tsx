@@ -1,12 +1,15 @@
 import type { SVGProps } from "react";
 
-export function MathMinus(props: SVGProps<SVGSVGElement>) {
+export function ZoomOut(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
       width="1em"
       height="1em"
+      xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
+      preserveAspectRatio="xMidYMid meet"
+      focusable="false"
+      role="none"
       {...props}
     >
       <path

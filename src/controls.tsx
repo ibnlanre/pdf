@@ -1,16 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChangeEvent, MouseEvent, Ref, forwardRef } from "react";
 
-import { MAXIMUM_SCALE, MINIMUM_SCALE } from "./state";
-import {
-  MathMinus,
-  ZoomOut,
-  ZoomIn,
-  MathPlus,
-  SoftwareDownload,
-  Scale,
-  Rotate,
-} from "./icons";
+import { ZoomIn } from "./components/zoom-in/icon";
+import { ZoomOut } from "./components/zoom-out/icon";
+import { ControlButton } from "./control-button";
+import { MAXIMUM_SCALE, MINIMUM_SCALE } from "./provider/state";
 import { useDownload } from "./use-download";
 
 interface ControlsProps {
@@ -25,8 +19,6 @@ interface ControlsProps {
   handleScale: () => void;
   handleFit: (evt: MouseEvent<HTMLButtonElement>) => void;
   handleScaleInput: (evt: ChangeEvent<HTMLInputElement>) => void;
-  hideTooltip: (evt: MouseEvent<HTMLButtonElement>) => void;
-  showTooltip: (evt: MouseEvent<HTMLButtonElement>) => void;
   shapeAtScale: boolean;
   pageInput: number;
   numPages: number;
@@ -44,8 +36,6 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
     handleScaleInput,
     handleScale,
     handleFit,
-    showTooltip,
-    hideTooltip,
   } = props;
   const { pageInput, scaleInput, numPages, scale, title, url } = props;
 
@@ -55,47 +45,45 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
   });
 
   return (
-    <section ref={controlsRef} className='pdf__Controls'>
+    <section ref={controlsRef} className="react-pdf__Controls">
       {/* PAGE INPUT */}
-      <div className='pdf__Controls__button'>
-        <p className='pdf__Controls__input__wrapper'>
+      <div className="react-pdf__Controls__group">
+        <p className="react-pdf__Controls__input-wrapper">
           <input
-            type='text'
-            size={pageInput.toString().length}
+            type="text"
+            title="Page number"
+            aria-label="Page number"
+            className="react-pdf__Controls__input react-pdf__Controls__page-input"
             value={pageInput}
             onChange={handlePageInput}
-            onBlur={handlePageInputBlur}
             onKeyUp={(evt) => {
               if (evt.key === "Enter") handlePageInputBlur();
             }}
           />
           <em>/</em>
-          <span>{numPages}</span>
+          <span title="Total pages" aria-label="Total pages">
+            {numPages}
+          </span>
         </p>
       </div>
 
       {/* DIVIDER */}
-      <hr />
+      <hr className="react-pdf__Controls__vertical-separator" />
 
-      {/* ZOOM */}
-      <div className='pdf__Controls__button'>
-        <p className='pdf__Controls__tooltip'>Zoom out</p>
-        <button
+      <section className="react-pdf__Controls__group">
+        {/* ZOOM OUT */}
+        <ControlButton
           disabled={scale <= MINIMUM_SCALE}
-          onClick={(evt) => {
-            hideTooltip(evt);
-            handleZoomOut();
-          }}
-          onMouseEnter={showTooltip}
-          onMouseLeave={hideTooltip}
-        >
-          <MathMinus />
-        </button>
+          icon={<ZoomOut />}
+          label="Zoom out"
+          onClick={handleZoomOut}
+        />
 
         {/* SCALE INPUT */}
         <input
-          type='text'
-          size={pageInput.toString().length}
+          aria-label="Zoom level"
+          className="react-pdf__Controls__input react-pdf__Controls__scale-input"
+          type="text"
           value={scaleInput}
           onChange={handleScaleInput}
           onKeyDown={(evt) => {
@@ -103,155 +91,90 @@ function ControlsRef(props: ControlsProps, controlsRef: Ref<HTMLDivElement>) {
           }}
         />
 
-        <div className='pdf__Controls__button'>
-          <p className='pdf__Controls__tooltip'>Zoom in</p>
-          <button
-            disabled={scale >= MAXIMUM_SCALE}
-            onClick={(evt) => {
-              hideTooltip(evt);
-              handleZoomIn();
-            }}
-            onMouseEnter={showTooltip}
-            onMouseLeave={hideTooltip}
-          >
-            <MathPlus />
-          </button>
-        </div>
-      </div>
+        {/* ZOOM IN */}
+        <ControlButton
+          disabled={scale >= MAXIMUM_SCALE || !shapeAtScale}
+          icon={<ZoomIn />}
+          label="Zoom in"
+          onClick={handleZoomIn}
+        />
+      </section>
 
       {/* DIVIDER */}
-      <hr />
+      <hr className="react-pdf__Controls__vertical-separator" />
 
-      {/* SCALE */}
-      <div className='pdf__Controls__button'>
-        <p className='pdf__Controls__tooltip'>Fit to width</p>{" "}
-        {/* fit to width or fit to page */}
-        <button
-          onMouseEnter={showTooltip}
-          onMouseLeave={hideTooltip}
-          onClick={(evt) => {
-            hideTooltip(evt);
-            handleFit(evt);
-          }}
-        >
-          <Scale />
-        </button>
-      </div>
-
-      {/* ROTATE */}
-      <div className='pdf__Controls__button'>
-        <p className='pdf__Controls__tooltip'>Rotate</p>
-        <button
-          onMouseEnter={showTooltip}
-          onMouseLeave={hideTooltip}
-          onClick={hideTooltip}
-        >
-          <Rotate />
-        </button>
-      </div>
-
-      {/* DOWNLOAD */}
-      <div className='pdf__Controls__button'>
-        <p className='pdf__Controls__tooltip'>Download</p>
-        <button
-          onClick={(evt) => {
-            hideTooltip(evt);
-            download();
-          }}
-          onMouseEnter={showTooltip}
-          onMouseLeave={hideTooltip}
-        >
-          <SoftwareDownload />
-        </button>
-      </div>
+      <section className="react-pdf__Controls__group">
+        <ControlButton
+          icon={<Scale />}
+          label="Fit to width"
+          onClick={handleFit}
+        />
+        <ControlButton icon={<Rotate />} label="Rotate" />
+        <ControlButton
+          icon={<SoftwareDownload />}
+          label="Download"
+          onClick={download}
+        />
+      </section>
 
       <style>{`
-        .pdf__Controls {
-            display: flex;
-            align-self: end;
-            align-items:center;
-            justify-self: center;
-            z-index: 1;
-            margin-bottom: 1rem;
-            color: rgb(255, 255, 255);
-            background-color: rgba(0, 0, 0, 0.75);
-            width: max-content;
-            border-radius: 0.375rem;
-            grid-area: 1/1;
-            transition: opacity 0.6s ease-in-out;
+        .react-pdf__Controls {
+          background-color: var(--react-pdf__controls-background);
+          height: var(--react-pdf__controls-height);
+          border-radius: var(--react-pdf__controls-border-radius);
+          padding: var(--react-pdf__controls-padding);
+          font-size: var(--react-pdf__controls-font-size);
+          transition: opacity 0.6s ease-in-out;
+          display: flex;
+          align-self: end;
+          align-items: center;
+          justify-self: center;
+          color: inherit;
+          gap: 0.75rem;
+          width: max-content;
+        }
+          
+        .react-pdf__Controls__group {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
 
-          hr {
-            width: 0.12rem;
-            height: 20px;
-            border-top: 0;
-            background: rgba(255,255,255,.3);
-            border: none;
-          }
+        .react-pdf__Controls__vertical-separator {
+          border-top: 0;
+          border: none;
+          background: color-mix(in srgb, var(--react-pdf__controls-color) 30%, transparent);
+          height: 15px;
+          width: 1px;
+        }
 
-          .pdf__Controls__button {
-            display: inline-flex;
-            position: relative; 
-            align-items: center;
-            padding-inline: 0.4rem;
-            
-           
-            gap: 0.125rem;
-            
-            .pdf__Controls__tooltip{
-             opacity: 0;
-             position: absolute; 
-             top: 1rem; 
-             left: 0rem; 
-             background-color: rgba(0, 0, 0, 0.75);
-             color: white; 
-             font-size: 0.65rem;
-             width: max-content;
-             padding: 0.4rem; 
-             border-radius: 0.25rem;
-               transition: opacity 0.3s ease-in-out;
-            }
+        .react-pdf__Controls__input-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding-inline: 0.5rem;
+        }
 
-            button {
-            background-color: transparent;
-            border: none;
-            outline;
-            color: rgb(255, 255, 255);
-            font-size: 1rem;
-            cursor: pointer;
-            padding: 5px;
-            line-height: 0rem
-            }
+        .react-pdf__Controls__input {
+          background: var(--react-pdf__input-background);
+          border: var(--react-pdf__input-border);
+          border-radius: var(--react-pdf__input-border-radius);
+          color: var(--react-pdf__input-color);
+          outline: var(--react-pdf__input-outline);
+          padding: var(--react-pdf__input-padding);
+          text-align: center;
+          caret-color: currentColor;
+          font-size: inherit;
+        }
 
-            button:hover {
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.208);
-             }
+        .react-pdf__Controls__scale-input {
+          --scale-content-width: ${scaleInput.length};
+          width: calc(max(2,var(--scale-content-width)) * 1ch + 3ch);
+        }
 
-             button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: transparent;
-
-          }
-
-          .pdf__Controls__input__wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding-inline: 0.5rem;
-           
-            
-          }
-
-           input {
-              color: rgb(255, 255, 255);
-              text-align: center;
-              background: rgba(0, 0, 0);
-              outline: none;
-              border: none;
-              padding: 0.2rem 0.5rem;
-              
-            }
+        .react-pdf__Controls__page-input {
+          --page-selector-content-width: ${pageInput.toString().length};
+          width: max(2.5ch, calc(var(--page-selector-content-width) * 1ch) + 0.5rem);
         }
       `}</style>
     </section>

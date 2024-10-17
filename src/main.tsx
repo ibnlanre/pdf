@@ -10,7 +10,7 @@ const url =
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <Frame url={url} title='PDF' />
+      <Frame url={url} title="PDF" />
     </React.StrictMode>
   );
 }

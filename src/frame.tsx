@@ -1,21 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  ChangeEvent,
-  MouseEvent,
-  useCallback,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react";
-import {
-  MAXIMUM_SCALE,
-  MINIMUM_SCALE,
-  initialFrameState,
-  reducer,
-} from "../src/state";
-import { Viewer } from "../src/viewer";
+import { ChangeEvent, MouseEvent, useCallback, useMemo, useRef } from "react";
 import { Controls } from "../src/controls";
 import { useHeight } from "../src/use-height";
+import { Viewer } from "../src/viewer";
+import { withPercentage } from "../src/with-percentage";
+import { ActionTypes, MAXIMUM_SCALE, MINIMUM_SCALE } from "./provider/state";
 
 interface FrameProps {
   title: string;
@@ -25,10 +14,9 @@ interface FrameProps {
 export function Frame(props: FrameProps) {
   const { title, url } = props;
 
-  const [state, dispatch] = useReducer(reducer, initialFrameState);
   const { loading, activePage, pageInput, scaleInput, numPages, scale, node } =
     state;
-  const { frame_width, frame_height, page_width, page_height } = state;
+  const { frameWidth, frameHeight, pageWidth, pageHeight } = state;
 
   // REFS
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,25 +24,31 @@ export function Frame(props: FrameProps) {
 
   const frameRef = useCallback((node: HTMLDivElement) => {
     if (node) {
-      dispatch({ type: "SET_FRAME_WIDTH", payload: node.offsetWidth });
-      dispatch({ type: "SET_FRAME_HEIGHT", payload: node.offsetHeight });
-      dispatch({ type: "SET_NODE", payload: node });
+      dispatch({
+        type: ActionTypes.SET_FRAME_WIDTH,
+        payload: node.offsetWidth,
+      });
+      dispatch({
+        type: ActionTypes.SET_FRAME_HEIGHT,
+        payload: node.offsetHeight,
+      });
+      dispatch({ type: ActionTypes.SET_NODE, payload: node });
     }
   }, []);
   const { height, width } = useHeight(containerRef);
 
   // useEffect(() => {
-  //   dispatch({ type: "SET_PAGE_INPUT", payload: activePage.toString() });
+  //   dispatch({ type: ActionTypes.SET_PAGE_INPUT, payload: activePage.toString() });
   // }, [activePage, scale]);
 
   // PAGINATION
 
   const onPrevPage = useCallback(() => {
-    dispatch({ type: "SET_ACTIVE_PAGE", payload: activePage - 1 });
+    dispatch({ type: ActionTypes.SET_ACTIVE_PAGE, payload: activePage - 1 });
   }, [activePage]);
 
   const onNextPage = useCallback(() => {
-    dispatch({ type: "SET_ACTIVE_PAGE", payload: activePage + 1 });
+    dispatch({ type: ActionTypes.SET_ACTIVE_PAGE, payload: activePage + 1 });
   }, [activePage]);
 
   // HIDE/SHOW CONTROLS
@@ -72,43 +66,25 @@ export function Frame(props: FrameProps) {
     }
   }, []);
 
-  // HIDE/SHOW TOOLTIP
-
-  const showTooltip = useCallback((evt: MouseEvent<HTMLButtonElement>) => {
-    const toolTip = evt.currentTarget.previousElementSibling as HTMLElement;
-
-    if (toolTip) {
-      toolTip.style.opacity = "1";
-    }
-  }, []);
-
-  const hideTooltip = useCallback((evt: MouseEvent<HTMLButtonElement>) => {
-    const toolTip = evt.currentTarget.previousElementSibling as HTMLElement;
-
-    if (toolTip) {
-      toolTip.style.opacity = "0";
-    }
-  }, []);
-
   // ZOOM HANDLERS
 
   const handleZoomIn = useCallback(() => {
     const zoom = +(scale + 0.25).toFixed(2);
     const payload = zoom > MAXIMUM_SCALE ? MAXIMUM_SCALE : zoom;
-    dispatch({ type: "SET_SCALE", payload });
+    dispatch({ type: ActionTypes.SET_SCALE, payload });
     dispatch({
-      type: "SET_SCALE_INPUT",
-      payload: `${(payload * 100).toString()}%`,
+      type: ActionTypes.SET_SCALE_INPUT,
+      payload: withPercentage(payload * 100),
     });
   }, [scale]);
 
   const handleZoomOut = useCallback(() => {
     const zoom = +(scale - 0.25).toFixed(2);
     const payload = zoom < MINIMUM_SCALE ? MINIMUM_SCALE : zoom;
-    dispatch({ type: "SET_SCALE", payload });
+    dispatch({ type: ActionTypes.SET_SCALE, payload });
     dispatch({
-      type: "SET_SCALE_INPUT",
-      payload: `${(payload * 100).toString()}%`,
+      type: ActionTypes.SET_SCALE_INPUT,
+      payload: withPercentage(payload * 100),
     });
   }, [scale]);
 
@@ -120,22 +96,22 @@ export function Frame(props: FrameProps) {
       : Number(scaleInput) / 100;
 
     if (scale < MINIMUM_SCALE) {
-      dispatch({ type: "SET_SCALE", payload: MINIMUM_SCALE });
+      dispatch({ type: ActionTypes.SET_SCALE, payload: MINIMUM_SCALE });
       dispatch({
-        type: "SET_SCALE_INPUT",
-        payload: `${(MINIMUM_SCALE * 100).toString()}%`,
+        type: ActionTypes.SET_SCALE_INPUT,
+        payload: withPercentage(MINIMUM_SCALE * 100),
       });
     } else if (scale > MAXIMUM_SCALE) {
-      dispatch({ type: "SET_SCALE", payload: MAXIMUM_SCALE });
+      dispatch({ type: ActionTypes.SET_SCALE, payload: MAXIMUM_SCALE });
       dispatch({
-        type: "SET_SCALE_INPUT",
-        payload: `${(MAXIMUM_SCALE * 100).toString()}%`,
+        type: ActionTypes.SET_SCALE_INPUT,
+        payload: withPercentage(MAXIMUM_SCALE * 100),
       });
     } else {
-      dispatch({ type: "SET_SCALE", payload: scale });
+      dispatch({ type: ActionTypes.SET_SCALE, payload: scale });
       dispatch({
-        type: "SET_SCALE_INPUT",
-        payload: `${scaleInput.toString()}%`,
+        type: ActionTypes.SET_SCALE_INPUT,
+        payload: withPercentage(scaleInput),
       });
     }
   }, [scaleInput]);
@@ -143,11 +119,14 @@ export function Frame(props: FrameProps) {
   const handleScaleInput = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
     const sanitizedValue = parseInt(evt.target.value);
     if (Number.isNaN(sanitizedValue)) {
-      dispatch({ type: "SET_SCALE_INPUT", payload: "" });
+      dispatch({ type: ActionTypes.SET_SCALE_INPUT, payload: "" });
       return;
     }
 
-    dispatch({ type: "SET_SCALE_INPUT", payload: sanitizedValue.toString() });
+    dispatch({
+      type: ActionTypes.SET_SCALE_INPUT,
+      payload: sanitizedValue.toString(),
+    });
   }, []);
 
   // FIT TO WIDTH HANDLER
@@ -157,8 +136,8 @@ export function Frame(props: FrameProps) {
       const toolTip = button.previousElementSibling as HTMLElement;
       let fitScale;
 
-      const fitToWidth = +(frame_width / page_width).toFixed(2);
-      const fitToPage = +(page_width / frame_width).toFixed(2);
+      const fitToWidth = +(frameWidth / pageWidth).toFixed(2);
+      const fitToPage = +(pageWidth / frameWidth).toFixed(2);
 
       if (scale !== fitToPage) {
         button.style.transform = "rotate(180deg)";
@@ -170,25 +149,25 @@ export function Frame(props: FrameProps) {
         toolTip.textContent = "Fit to page";
       }
 
-      dispatch({ type: "SET_SCALE", payload: fitScale });
+      dispatch({ type: ActionTypes.SET_SCALE, payload: fitScale });
       dispatch({
-        type: "SET_SCALE_INPUT",
+        type: ActionTypes.SET_SCALE_INPUT,
         payload: `${(fitScale * 100).toString()}%`,
       });
     },
-    [frame_width, page_width, scale]
+    [frameWidth, pageWidth, scale]
   );
 
   const handlePageDimensions = useCallback(
     (page: { width: number; height: number }) => {
-      dispatch({ type: "SET_PAGE_WIDTH", payload: page.width });
-      dispatch({ type: "SET_PAGE_HEIGHT", payload: page.height });
+      dispatch({ type: ActionTypes.SET_PAGE_WIDTH, payload: page.width });
+      dispatch({ type: ActionTypes.SET_PAGE_HEIGHT, payload: page.height });
     },
     []
   );
 
   const handleActivePage = useCallback((pageNumber: number) => {
-    dispatch({ type: "SET_ACTIVE_PAGE", payload: pageNumber });
+    dispatch({ type: ActionTypes.SET_ACTIVE_PAGE, payload: pageNumber });
   }, []);
 
   // PAGE INPUT HANDLERS
@@ -198,7 +177,7 @@ export function Frame(props: FrameProps) {
       const pageInput = parseInt(evt.target.value);
       const page = Number.isNaN(pageInput) ? 1 : pageInput;
       const payload = page > 0 && page <= numPages ? page : activePage;
-      dispatch({ type: "SET_ACTIVE_PAGE", payload });
+      dispatch({ type: ActionTypes.SET_ACTIVE_PAGE, payload });
     },
     [activePage, numPages]
   );
@@ -219,21 +198,43 @@ export function Frame(props: FrameProps) {
   }, [pageInput]);
 
   const handleLoading = useCallback((loading: boolean) => {
-    dispatch({ type: "SET_LOADING", payload: loading });
+    dispatch({ type: ActionTypes.SET_LOADING, payload: loading });
   }, []);
 
   const handleNumPages = useCallback((numPages: number) => {
-    dispatch({ type: "SET_NUM_PAGES", payload: numPages });
+    dispatch({ type: ActionTypes.SET_NUM_PAGES, payload: numPages });
   }, []);
 
   // INTERSECTION OBSERVER
 
   const shapeAtScale = useMemo(() => {
-    return page_width * scale >= frame_width;
-  }, [scale, page_width, frame_width]);
+    return pageWidth * scale >= frameWidth;
+  }, [scale, pageWidth, frameWidth]);
 
   return (
     <div className="react-pdf__Container" ref={containerRef}>
+      <section className="react-pdf__Toolbar">
+        <Controls
+          url={url}
+          title={title}
+          ref={controlsRef}
+          onPrevPage={onPrevPage}
+          onNextPage={onNextPage}
+          handleZoomIn={handleZoomIn}
+          handleZoomOut={handleZoomOut}
+          handlePageInput={handlePageInput}
+          handlePageInputBlur={handlePageInputBlur}
+          handleScale={handleScale}
+          handleFit={handleFit}
+          handleScaleInput={handleScaleInput}
+          shapeAtScale={shapeAtScale}
+          pageInput={activePage}
+          numPages={numPages}
+          scale={scale}
+          scaleInput={scaleInput}
+        />
+      </section>
+
       <article className="react-pdf__Frame" ref={frameRef}>
         <Viewer
           url={url}
@@ -248,35 +249,15 @@ export function Frame(props: FrameProps) {
           hideControls={hideControls}
           showControls={showControls}
         />
-
-        <Controls
-          url={url}
-          title={title}
-          ref={controlsRef}
-          onPrevPage={onPrevPage}
-          onNextPage={onNextPage}
-          handleZoomIn={handleZoomIn}
-          handleZoomOut={handleZoomOut}
-          handlePageInput={handlePageInput}
-          handlePageInputBlur={handlePageInputBlur}
-          handleScale={handleScale}
-          handleFit={handleFit}
-          handleScaleInput={handleScaleInput}
-          showTooltip={showTooltip}
-          hideTooltip={hideTooltip}
-          shapeAtScale={shapeAtScale}
-          pageInput={activePage}
-          numPages={numPages}
-          scale={scale}
-          scaleInput={scaleInput}
-        />
       </article>
+
       <style>{`
         .react-pdf__Container {
           display: flex;
-          overflow: auto;
-          max-height: 100%;
-          height: ${height}px;
+          background-color: rgb(82, 86, 89);
+          flex-direction: column;
+          overflow: hidden;
+          height: 100%;
         }
         
         .react-pdf__Frame {
@@ -288,7 +269,6 @@ export function Frame(props: FrameProps) {
           flex: 1;
 
           .react-pdf__Document {
-            background-color: #525659;
             text-align: center;
             overflow: auto;
             gap: 0.75rem;
@@ -303,11 +283,22 @@ export function Frame(props: FrameProps) {
               .react-pdf__Page__canvas {
                 fill: rgb(255, 255, 255);
                 background-color: rgb(255, 255, 255);
-                width: ${page_width * scale}px !important;
-                height: ${page_height * scale}px !important;
+                width: ${pageWidth * scale}px !important;
+                height: ${pageHeight * scale}px !important;
               }
             }
           }
+        }
+
+        .react-pdf__Toolbar {
+          font-family: sans-serif;
+          padding: var(--react-pdf__toolbar-padding);
+          background-color: var(--react-pdf__toolbar-background);
+          color: var(--react-pdf__toolbar-color);
+          font-size: var(--react-pdf__toolbar-font-size);
+          display: flex;
+          justify-content: center;
+          gap: 0.5rem;
         }
       `}</style>
     </div>
