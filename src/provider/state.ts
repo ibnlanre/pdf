@@ -58,7 +58,7 @@ type FrameStateAction = {
   };
   node: {
     type: ActionTypes.SET_NODE;
-    payload: HTMLDivElement | null;
+    payload: HTMLElement | null;
   };
 };
 

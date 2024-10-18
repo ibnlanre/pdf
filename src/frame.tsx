@@ -4,6 +4,9 @@ import { Controls } from "../src/controls";
 import { useHeight } from "../src/use-height";
 import { Viewer } from "../src/viewer";
 import { withPercentage } from "../src/with-percentage";
+import { useFrameHeight } from "./provider/handlers/use-frame-height";
+import { useFrameWidth } from "./provider/handlers/use-frame-width";
+import { useNode } from "./provider/handlers/use-node";
 import { ActionTypes, MAXIMUM_SCALE, MINIMUM_SCALE } from "./provider/state";
 
 interface FrameProps {
@@ -13,6 +16,10 @@ interface FrameProps {
 
 export function Frame(props: FrameProps) {
   const { title, url } = props;
+
+  const { setFrameWidth } = useFrameWidth();
+  const { setFrameHeight } = useFrameHeight();
+  const { setNode } = useNode();
 
   const { loading, activePage, pageInput, scaleInput, numPages, scale, node } =
     state;
@@ -24,15 +31,9 @@ export function Frame(props: FrameProps) {
 
   const frameRef = useCallback((node: HTMLDivElement) => {
     if (node) {
-      dispatch({
-        type: ActionTypes.SET_FRAME_WIDTH,
-        payload: node.offsetWidth,
-      });
-      dispatch({
-        type: ActionTypes.SET_FRAME_HEIGHT,
-        payload: node.offsetHeight,
-      });
-      dispatch({ type: ActionTypes.SET_NODE, payload: node });
+      setFrameWidth(node);
+      setFrameHeight(node);
+      setNode(node);
     }
   }, []);
   const { height, width } = useHeight(containerRef);

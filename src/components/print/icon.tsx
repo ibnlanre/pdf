@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-export function FitToWidth(props: SVGProps<SVGSVGElement>) {
+export function Print(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       width="1em"
@@ -13,9 +13,7 @@ export function FitToWidth(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path
-        fill-rule="evenodd"
-        d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM3.5 12.01L8 9v6l-4.5-2.99zM16 15V9l4.5 3.01L16 15zM3 19.01h18V4.99H3v14.02z"
-        clip-rule="evenodd"
+        d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"
         fill="currentColor"
       />
     </svg>
